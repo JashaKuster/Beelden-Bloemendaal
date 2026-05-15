@@ -5,8 +5,42 @@ const modalImage = document.querySelector("#modal-image");
 const modalTitle = document.querySelector("#modal-title");
 const modalDescription = document.querySelector("#modal-description");
 const closeButton = document.querySelector(".close-button");
+const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 let lastFocusedCard = null;
+
+if (
+  cards.length === 0 ||
+  !backdrop ||
+  !modal ||
+  !modalImage ||
+  !modalTitle ||
+  !modalDescription ||
+  !closeButton
+) {
+  console.warn("Galerij-interactie kon niet volledig worden geïnitialiseerd.");
+} else {
+  function trapFocus(event) {
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    const focusableElements = [...modal.querySelectorAll(focusableSelector)];
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (!firstElement || !lastElement) {
+      return;
+    }
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
 
 function openModal(card) {
   const image = card.querySelector("img");
@@ -53,3 +87,5 @@ document.addEventListener("keydown", (event) => {
     closeModal();
   }
 });
+  backdrop.addEventListener("keydown", trapFocus);
+}

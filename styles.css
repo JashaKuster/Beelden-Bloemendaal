@@ -135,6 +135,17 @@ body {
 }
 
 .close-button:focus-visible {
-  outline: 2px solid #8a8a8a;
+  outline: 2px solid #4a4a4a;
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    transform: none;
+  }
 }
