@@ -1,0 +1,71 @@
+:root {
+  --background: #f7f7f5;
+  --surface: #ffffff;
+  --text: #1f1f1f;
+  --muted: #616161;
+  --border: #e5e5e3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: var(--background);
+}
+
+.header {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3rem 1rem 2rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+}
+
+.header p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.gallery {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.card h2 {
+  margin: 0;
+  padding: 1rem 1rem 0.4rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card p {
+  margin: 0;
+  padding: 0 1rem 1rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
