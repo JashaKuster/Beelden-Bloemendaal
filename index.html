@@ -13,7 +13,14 @@
     </header>
 
     <main class="gallery" aria-label="Galerij met handgemaakte beelden">
-      <article class="card">
+      <article
+        class="card"
+        role="button"
+        tabindex="0"
+        aria-haspopup="dialog"
+        data-title="Stilte in Steen"
+        data-description="Een organische vorm in natuursteen die rust en eenvoud uitstraalt."
+      >
         <img
           src="https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?auto=format&fit=crop&w=900&q=80"
           alt="Handgemaakt stenen beeld in zachte belichting"
@@ -23,7 +30,14 @@
         <p>Een organische vorm in natuursteen die rust en eenvoud uitstraalt.</p>
       </article>
 
-      <article class="card">
+      <article
+        class="card"
+        role="button"
+        tabindex="0"
+        aria-haspopup="dialog"
+        data-title="Aardevorm"
+        data-description="Keramiek met subtiele textuur, geïnspireerd op duinen en windlijnen."
+      >
         <img
           src="https://images.unsplash.com/photo-1529429617124-aee7114f9fef?auto=format&fit=crop&w=900&q=80"
           alt="Keramisch beeld met natuurlijke structuur"
@@ -33,7 +47,14 @@
         <p>Keramiek met subtiele textuur, geïnspireerd op duinen en windlijnen.</p>
       </article>
 
-      <article class="card">
+      <article
+        class="card"
+        role="button"
+        tabindex="0"
+        aria-haspopup="dialog"
+        data-title="Lichtlijn"
+        data-description="Een abstracte compositie in brons met een verfijnde, open houding."
+      >
         <img
           src="https://images.unsplash.com/photo-1579273166655-5f6d4f356fa9?auto=format&fit=crop&w=900&q=80"
           alt="Abstract bronzen beeld op lichte achtergrond"
@@ -43,5 +64,14 @@
         <p>Een abstracte compositie in brons met een verfijnde, open houding.</p>
       </article>
     </main>
+    <div class="modal-backdrop" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <img id="modal-image" alt="" />
+        <h2 id="modal-title"></h2>
+        <p id="modal-description"></p>
+        <button type="button" class="close-button">Sluiten</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
   </body>
 </html>
