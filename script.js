@@ -63,7 +63,7 @@ function trapFocus(event) {
 
 function openModal(card, imageIndex = 0) {
   // Alle afbeeldingen van deze kaart verzamelen:
-  const images = card.querySelectorAll("img");
+  const images = card.querySelectorAll(".card-image");
   currentImages = Array.from(images);
   if (currentImages.length === 0) {
     return;
@@ -138,7 +138,7 @@ backdrop.addEventListener("keydown", trapFocus);
 
 // Klik op afbeelding in de kaart opent modaal, met juiste index
 cards.forEach((card) => {
-  const cardImages = card.querySelectorAll("img");
+  const cardImages = card.querySelectorAll(".card-image");
   cardImages.forEach((img, imgIdx) => {
     img.addEventListener("click", (event) => {
       event.stopPropagation();
