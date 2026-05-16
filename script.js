@@ -12,6 +12,9 @@ let currentImages = [];
 let currentImageIndex = 0;
 
 function setModalImage(index) {
+  if (!currentImages[index]) {
+    return;
+  }
   modalImage.src = currentImages[index].src;
   modalImage.alt = currentImages[index].alt;
 }
@@ -60,8 +63,11 @@ function trapFocus(event) {
 
 function openModal(card, imageIndex = 0) {
   // Alle afbeeldingen van deze kaart verzamelen:
-  const images = card.querySelectorAll(".card-images img");
+  const images = card.querySelectorAll("img");
   currentImages = Array.from(images);
+  if (currentImages.length === 0) {
+    return;
+  }
   currentImageIndex = imageIndex;
   setModalImage(currentImageIndex);
   modalTitle.textContent = card.dataset.title || "";
@@ -132,7 +138,7 @@ backdrop.addEventListener("keydown", trapFocus);
 
 // Klik op afbeelding in de kaart opent modaal, met juiste index
 cards.forEach((card) => {
-  const cardImages = card.querySelectorAll(".card-images img");
+  const cardImages = card.querySelectorAll("img");
   cardImages.forEach((img, imgIdx) => {
     img.addEventListener("click", (event) => {
       event.stopPropagation();
