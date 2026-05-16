@@ -1,5 +1,6 @@
 const cards = document.querySelectorAll(".card");
 const backdrop = document.querySelector(".modal-backdrop");
+if (backdrop) backdrop.hidden = true;
 const modal = document.querySelector(".modal");
 const modalImage = document.querySelector("#modal-image");
 const modalTitle = document.querySelector("#modal-title");
@@ -86,9 +87,17 @@ function openModal(card, imageIndex = 0) {
 }
 
 function closeModal() {
-  backdrop.hidden = true;
+  if (backdrop) backdrop.hidden = true;
+  if (modalImage) { modalImage.src = ""; modalImage.alt = ""; }
+  if (modalTitle) modalTitle.textContent = "";
+  if (modalDescription) modalDescription.textContent = "";
+  currentImages = [];
+  currentImageIndex = 0;
+  prevButton.style.display = "none";
+  nextButton.style.display = "none";
   if (lastFocusedCard) {
     lastFocusedCard.focus();
+    lastFocusedCard = null;
   }
 }
 
@@ -113,16 +122,19 @@ nextButton.addEventListener("click", () => {
   }
 });
 
-closeButton.addEventListener("click", closeModal);
+if (closeButton) closeButton.addEventListener("click", closeModal);
 
-backdrop.addEventListener("click", (event) => {
-  if (!modal.contains(event.target)) {
-    closeModal();
-  }
-});
+if (backdrop) {
+  backdrop.addEventListener("click", (event) => {
+    if (!modal.contains(event.target)) {
+      closeModal();
+    }
+  });
+  backdrop.addEventListener("keydown", trapFocus);
+}
 
 document.addEventListener("keydown", (event) => {
-  if (!backdrop.hidden) {
+  if (backdrop && !backdrop.hidden) {
     if (event.key === "Escape") {
       closeModal();
     }
@@ -134,7 +146,6 @@ document.addEventListener("keydown", (event) => {
     }
   }
 });
-backdrop.addEventListener("keydown", trapFocus);
 
 // Klik op afbeelding in de kaart opent modaal, met juiste index
 cards.forEach((card) => {
