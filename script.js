@@ -8,47 +8,74 @@ const closeButton = document.querySelector(".close-button");
 const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 let lastFocusedCard = null;
+let currentImages = [];
+let currentImageIndex = 0;
 
-if (
-  cards.length === 0 ||
-  !backdrop ||
-  !modal ||
-  !modalImage ||
-  !modalTitle ||
-  !modalDescription ||
-  !closeButton
-) {
-  console.warn("Galerij-interactie kon niet volledig worden geïnitialiseerd.");
-} else {
-  function trapFocus(event) {
-    if (event.key !== "Tab") {
-      return;
-    }
+function setModalImage(index) {
+  modalImage.src = currentImages[index].src;
+  modalImage.alt = currentImages[index].alt;
+}
 
-    const focusableElements = [...modal.querySelectorAll(focusableSelector)];
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+// Vorige-knop
+const prevButton = document.createElement("button");
+prevButton.type = "button";
+prevButton.className = "prev-button";
+prevButton.textContent = "Vorige";
 
-    if (!firstElement || !lastElement) {
-      return;
-    }
+// Volgende-knop
+const nextButton = document.createElement("button");
+nextButton.type = "button";
+nextButton.className = "next-button";
+nextButton.textContent = "Volgende";
 
-    if (event.shiftKey && document.activeElement === firstElement) {
-      event.preventDefault();
-      lastElement.focus();
-    } else if (!event.shiftKey && document.activeElement === lastElement) {
-      event.preventDefault();
-      firstElement.focus();
-    }
+// Voeg knoppen toe in de modal alleen als ze nog niet staan
+if (modal && !modal.querySelector(".prev-button")) {
+  modal.insertBefore(prevButton, modalImage);
+}
+if (modal && !modal.querySelector(".next-button")) {
+  modal.insertBefore(nextButton, modalImage.nextSibling);
+}
+
+function trapFocus(event) {
+  if (event.key !== "Tab") {
+    return;
   }
 
-function openModal(card) {
-  const image = card.querySelector("img");
-  modalImage.src = image.src;
-  modalImage.alt = image.alt;
+  const focusableElements = [...modal.querySelectorAll(focusableSelector)];
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (!firstElement || !lastElement) {
+    return;
+  }
+
+  if (event.shiftKey && document.activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+  } else if (!event.shiftKey && document.activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+}
+
+function openModal(card, imageIndex = 0) {
+  // Alle afbeeldingen van deze kaart verzamelen:
+  const images = card.querySelectorAll(".card-images img");
+  currentImages = Array.from(images);
+  currentImageIndex = imageIndex;
+  setModalImage(currentImageIndex);
   modalTitle.textContent = card.dataset.title || "";
   modalDescription.textContent = card.dataset.description || "";
   backdrop.hidden = false;
+  // Knoppen tonen of verbergen
+  if (currentImages.length > 1) {
+    prevButton.style.display = "";
+    nextButton.style.display = "";
+    updateNavButtons();
+  } else {
+    prevButton.style.display = "none";
+    nextButton.style.display = "none";
+  }
   closeButton.focus();
 }
 
@@ -59,19 +86,25 @@ function closeModal() {
   }
 }
 
-cards.forEach((card) => {
-  card.addEventListener("click", () => {
-    lastFocusedCard = card;
-    openModal(card);
-  });
+function updateNavButtons() {
+  prevButton.disabled = currentImageIndex === 0;
+  nextButton.disabled = currentImageIndex === currentImages.length - 1;
+}
 
-  card.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      lastFocusedCard = card;
-      openModal(card);
-    }
-  });
+prevButton.addEventListener("click", () => {
+  if (currentImageIndex > 0) {
+    currentImageIndex--;
+    setModalImage(currentImageIndex);
+    updateNavButtons();
+  }
+});
+
+nextButton.addEventListener("click", () => {
+  if (currentImageIndex < currentImages.length - 1) {
+    currentImageIndex++;
+    setModalImage(currentImageIndex);
+    updateNavButtons();
+  }
 });
 
 closeButton.addEventListener("click", closeModal);
@@ -83,9 +116,45 @@ backdrop.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !backdrop.hidden) {
-    closeModal();
+  if (!backdrop.hidden) {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+    if (event.key === "ArrowRight" && nextButton.style.display !== "none" && !nextButton.disabled) {
+      nextButton.click();
+    }
+    if (event.key === "ArrowLeft" && prevButton.style.display !== "none" && !prevButton.disabled) {
+      prevButton.click();
+    }
   }
 });
-  backdrop.addEventListener("keydown", trapFocus);
-}
+backdrop.addEventListener("keydown", trapFocus);
+
+// Klik op afbeelding in de kaart opent modaal, met juiste index
+cards.forEach((card) => {
+  const cardImages = card.querySelectorAll(".card-images img");
+  cardImages.forEach((img, imgIdx) => {
+    img.addEventListener("click", (event) => {
+      event.stopPropagation();
+      lastFocusedCard = card;
+      openModal(card, imgIdx);
+    });
+    img.style.cursor = "pointer"; // visuele hint
+  });
+
+  // Optioneel: klik overal op kaart (niet op img) blijft de eerste afbeelding openen
+  card.addEventListener("click", (event) => {
+    if (event.target.tagName !== "IMG") {
+      lastFocusedCard = card;
+      openModal(card, 0);
+    }
+  });
+
+  card.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      lastFocusedCard = card;
+      openModal(card, 0);
+    }
+  });
+});
